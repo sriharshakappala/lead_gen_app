@@ -49,6 +49,8 @@
 		</div>
 		<br>
 
+		<div id="results_here"></div>
+
 		<div class="row">
 			<div class="col-md-6">
 				<label>4. Significance of the name</label>
@@ -73,16 +75,25 @@ discovery.zen.ping.multicast.enabled: false
 -->
 
 <script>
+
+$(document).ready(function() {
+	$("#company_name").blur(function() {
+		getSearchResults($('#company_name').val());
+	})
+});
+
 function getSearchResults(search_query) {
   var data;
   $.ajax({
-    type: "POST",
+    type: "GET",
     crossDomain: true,
     url: 'http://localhost:9200/customer/external/_search?q=company_name:' + search_query,
     dataType: "JSON",
     success: function(data) {
-      console.log(data)
+			data = JSON.stringify(data);
+			document.getElementById('results_here').innerHTML = data;
     }
   });
 }
+
 </script>

@@ -1,3 +1,9 @@
+<style>
+	.height-fix {
+		margin-top: 8px;
+	}
+</style>
+
 <div class="container-fluid">
 	<div class="form-group">
 
@@ -29,7 +35,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-3">
-				<input class="form-control" type="text"></input>
+				<input class="form-control" type="text" id="company_name"></input>
 			</div>
 			<div class="col-md-3">
 				<select class="form-control">
@@ -56,8 +62,27 @@
 	</div>
 </div>
 
-<style>
-	.height-fix {
-		margin-top: 8px;
-	}
-</style>
+<!--
+Bullshit configuration for enabling CORS in elasticsearch
+Add the below stuff in elasticsearch.yml file
+*********************************************************
+http.cors.allow-origin: "/.*/"
+http.cors.enabled: true
+discovery.zen.ping.multicast.enabled: false
+*********************************************************
+-->
+
+<script>
+function getSearchResults(search_query) {
+  var data;
+  $.ajax({
+    type: "POST",
+    crossDomain: true,
+    url: 'http://localhost:9200/customer/external/_search?q=company_name:' + search_query,
+    dataType: "JSON",
+    success: function(data) {
+      console.log(data)
+    }
+  });
+}
+</script>

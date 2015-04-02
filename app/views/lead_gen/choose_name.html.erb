@@ -87,7 +87,7 @@ function getSearchResults(search_query) {
   $.ajax({
     type: "GET",
     crossDomain: true,
-    url: 'http://localhost:9200/customer/external/_search?q=company_name:' + search_query,
+    url: 'http://localhost:9200/company/external/_search?q=company_name:' + search_query,
     dataType: "JSON",
     success: function(data) {
 			data = JSON.stringify(data);

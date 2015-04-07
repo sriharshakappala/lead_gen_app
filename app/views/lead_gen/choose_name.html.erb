@@ -38,7 +38,7 @@
 				<input class="form-control" type="text" id="company_name"></input>
 			</div>
 			<div class="col-md-3">
-				<select class="form-control">
+				<select class="form-control" id="suffix">
 					<option>Legal Solutions</option>
 					<option>Law Solutions</option>
 				</select>
@@ -47,7 +47,7 @@
 				<div class="height-fix"><b>Private Limited</b></div>
 			</div>
 			<div class="col-md-3">
-				<button type="button" class="btn btn-success">Check</button>
+				<button type="button" class="btn btn-success" id="check">Check</button>
 			</div>
 		</div>
 		<br>
@@ -106,7 +106,6 @@ discovery.zen.ping.multicast.enabled: false
 	  $("#company_name").autocomplete({
 	    source: function(request, response) {
 	      var wildcard = { "company_name": "*" + request.term.toLowerCase() + "*"};
-	      console.log(wildcard);
 	      var postData = {
 	          "query": { "match_phrase": wildcard },
 	          "fields": ["company_name", "_id"]
@@ -117,7 +116,6 @@ discovery.zen.ping.multicast.enabled: false
 	        dataType: "JSON",
 	        data: JSON.stringify(postData),
 	        success: function(data) {
-	          console.log(data);
 	          response($.map(data.hits.hits, function(item) {
 	            return {
 	              label: item.fields.company_name,
@@ -129,6 +127,27 @@ discovery.zen.ping.multicast.enabled: false
 	    },
 	    minLength: 2
 	  })
+	});
+
+	$(document).ready(function() {
+		$("#check").click(function() {
+			var name = $("#company_name").val();
+			var suffix = $("#suffix :selected").text();;
+			var pvt_ltd = "Private Limited";
+			company_name = name + " " + suffix + " " + pvt_ltd
+
+			$.ajax({
+		    type: "POST",
+		    url: 'http://localhost:3000/lead_gen/take_decision',
+		    data: { company_name : company_name.toUpperCase() },
+		    success: function(data) {
+					// data = JSON.stringify(data);
+					// document.getElementById('results_here').innerHTML = data;
+					console.log(data);
+		    }
+		  });
+
+		});
 	});
 
 </script>

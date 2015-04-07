@@ -44,3 +44,5 @@ group :development, :test do
 end
 
 gem 'elasticsearch-rails'
+gem 'elasticsearch'
+gem 'pry'

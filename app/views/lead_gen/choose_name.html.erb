@@ -38,13 +38,16 @@
 				<input class="form-control" type="text" id="company_name"></input>
 			</div>
 			<div class="col-md-3">
-				<select class="form-control">
+				<select class="form-control" id="suffix">
 					<option>Legal Solutions</option>
 					<option>Law Solutions</option>
 				</select>
 			</div>
 			<div class="col-md-3">
 				<div class="height-fix"><b>Private Limited</b></div>
+			</div>
+			<div class="col-md-3">
+				<button type="button" class="btn btn-success" id="check">Check</button>
 			</div>
 		</div>
 		<br>
@@ -76,24 +79,77 @@ discovery.zen.ping.multicast.enabled: false
 
 <script>
 
-$(document).ready(function() {
-	$("#company_name").blur(function() {
-		getSearchResults($('#company_name').val());
-	})
-});
+// $(document).ready(function() {
+// 	$("#company_name").blur(function() {
+// 		getSearchResults($('#company_name').val());
+// 	})
+// });
 
-function getSearchResults(search_query) {
-  var data;
-  $.ajax({
-    type: "GET",
-    crossDomain: true,
-    url: 'http://localhost:9200/customer/external/_search?q=company_name:' + search_query,
-    dataType: "JSON",
-    success: function(data) {
-			data = JSON.stringify(data);
-			document.getElementById('results_here').innerHTML = data;
-    }
-  });
-}
+// function getSearchResults(search_query) {
+//   var data;
+//   $.ajax({
+//     type: "GET",
+//     crossDomain: true,
+//     url: 'http://localhost:9200/company/external/_search?q=company_name:' + search_query,
+//     dataType: "JSON",
+//     success: function(data) {
+// 			data = JSON.stringify(data);
+// 			document.getElementById('results_here').innerHTML = data;
+//     }
+//   });
+// }
+
+// Modify search results by size
+// http://localhost:9200/company/external/_search?size=1000
+
+	$(document).ready(function() {
+	  $("#company_name").autocomplete({
+	    source: function(request, response) {
+	      var wildcard = { "company_name": "*" + request.term.toLowerCase() + "*"};
+	      var postData = {
+	          "query": { "match_phrase": wildcard },
+	          "fields": ["company_name", "_id"]
+	      };
+	      $.ajax({
+	        url: "http://localhost:9200/company/external/_search",
+	        type: "POST",
+	        dataType: "JSON",
+	        data: JSON.stringify(postData),
+	        success: function(data) {
+	          response($.map(data.hits.hits, function(item) {
+	            return {
+	              label: item.fields.company_name,
+	              id: item.fields._id
+	            }
+	          }));
+	        },
+	      });
+	    },
+	    minLength: 2
+	  })
+	});
+
+	$(document).ready(function() {
+		$("#check").click(function() {
+			var name = $("#company_name").val();
+			var suffix = $("#suffix :selected").text();;
+			var pvt_ltd = "Private Limited";
+			company_name = name + " " + suffix + " " + pvt_ltd
+
+			$.ajax({
+		    type: "POST",
+		    url: 'http://localhost:3000/lead_gen/take_decision',
+		    data: { company_name : company_name.toUpperCase() },
+		    success: function(data) {
+					if(data.hits.total == 0) {
+						document.getElementById('results_here').innerHTML = "Company Name is available";
+					} else {
+						document.getElementById('results_here').innerHTML = "Company Name is not available";
+					}
+		    }
+		  });
+
+		});
+	});
 
 </script>

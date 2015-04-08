@@ -141,9 +141,11 @@ discovery.zen.ping.multicast.enabled: false
 		    url: 'http://localhost:3000/lead_gen/take_decision',
 		    data: { company_name : company_name.toUpperCase() },
 		    success: function(data) {
-					// data = JSON.stringify(data);
-					// document.getElementById('results_here').innerHTML = data;
-					console.log(data);
+					if(data.hits.total == 0) {
+						document.getElementById('results_here').innerHTML = "Company Name is available";
+					} else {
+						document.getElementById('results_here').innerHTML = "Company Name is not available";
+					}
 		    }
 		  });
 

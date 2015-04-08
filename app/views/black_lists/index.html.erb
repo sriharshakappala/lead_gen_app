@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Black Lists</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @black_lists.each do |black_list| %>
+      <tr>
+        <td><%= black_list.name %></td>
+        <td><%= link_to 'Show', black_list %></td>
+        <td><%= link_to 'Edit', edit_black_list_path(black_list) %></td>
+        <td><%= link_to 'Destroy', black_list, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Black list', new_black_list_path %>
+
+<h3>Attach Black List Words</h3>
+<%= form_tag blacklist_word_imports_path, multipart: true do %>
+  <%= file_field_tag :file %>
+  <br>
+  <%= submit_tag "Import" ,:class => "black_btn" %>
+<% end %>

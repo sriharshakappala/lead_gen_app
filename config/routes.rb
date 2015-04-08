@@ -54,4 +54,6 @@ Rails.application.routes.draw do
   #     # (app/controllers/admin/products_controller.rb)
   #     resources :products
   #   end
+  resources :black_lists
+  post 'blacklist_word_imports' => 'black_lists#blacklist_word_imports'
 end

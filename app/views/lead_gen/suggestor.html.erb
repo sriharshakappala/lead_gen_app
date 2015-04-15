@@ -1,0 +1,29 @@
+<input type="text" id="company_name" />
+<button id="check">Check</button>
+<br>
+
+<div id="result"></div>
+
+<script>
+	
+	$(document).ready(function() {
+		// Main guy who talks with elasticsearch for decision
+		$("#check").click(function() {
+			var company_name = $("#company_name").val();
+			console.log(company_name);
+			$.ajax({
+		    type: "POST",
+		    url: '/lead_gen/suggestion_engine',
+		    data: { company_name : company_name.toUpperCase() },
+		    success: function(data) {
+
+		    	console.log(data);
+		    	// data.replace("/n", "<br>")
+		    	$("#result").html(data.replace(/\n/g, '<br />'));
+		    	
+		    }
+		  });
+
+		});
+	});
+</script>
